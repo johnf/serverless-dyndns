@@ -1,0 +1,16 @@
+# package directories
+node_modules
+
+# Serverless directories
+.serverless
+.webpack
+
+# Yarn 2
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+.pnp.*
+
+# Local config
+.envrc
+.env.*
