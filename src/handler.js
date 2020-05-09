@@ -33,38 +33,40 @@ const update = async (req, res) => {
 
   const client = new Route53Client({});
   const listCommand = new ListHostedZonesCommand({});
-  const results = await client.send(listCommand);
-  const zones = results.HostedZones;
 
-  const zone = zones.find((z) => z.Name === `${domainName}.`);
-  if (!zone) {
-    console.error(`${domainName} not in route53`);
-    return res.send(`ERROR: ${domainName} not in Route53`);
-  }
+  return client.send(listCommand)
+    .then(({ HostedZones: zones }) => {
+      const zone = zones.find((z) => z.Name === `${domainName}.`);
+      if (!zone) {
+        console.error(`${domainName} not in route53`);
+        throw new Error(`ERROR: ${domainName} not in Route53`);
+      }
 
-  const params = {
-    HostedZoneId: zone.Id,
-    ChangeBatch: {
-      Changes: [{
-        Action: 'UPSERT',
-        ResourceRecordSet: {
-          Name: `${hostname}.`,
-          Type: 'A',
-          TTL: 60,
-          ResourceRecords: [{ Value: ip }],
+      const params = {
+        HostedZoneId: zone.Id,
+        ChangeBatch: {
+          Changes: [{
+            Action: 'UPSERT',
+            ResourceRecordSet: {
+              Name: `${hostname}.`,
+              Type: 'A',
+              TTL: 60,
+              ResourceRecords: [{ Value: ip }],
+            },
+          }],
         },
-      }],
-    },
-  };
+      };
 
-  const updateCommand = new ChangeResourceRecordSetsCommand(params);
+      const updateCommand = new ChangeResourceRecordSetsCommand(params);
 
-  return client.send(updateCommand)
-    .then(() => res.send(`good ${ip}`));
+      return client.send(updateCommand);
+    })
+    .then(() => res.send(`good ${ip}`))
+    .catch((err) => res.send(err.message));
 };
 
 app.get('/nic/update', update);
 app.get('/v3/update', update);
 
 export const dyndns = serverless(app);
-export const foo = true;
+export default dyndns;
