@@ -3,13 +3,11 @@ import serverless from 'serverless-http';
 import basicAuth from 'express-basic-auth';
 import { Route53Client, ListHostedZonesCommand, ChangeResourceRecordSetsCommand } from '@aws-sdk/client-route-53';
 
-
-const { USERNAME, PASSWORD, HOSTNAMES } = process.env;
+const { DYNDNS_USERNAME, DYNDNS_PASSWORD, HOSTNAMES } = process.env;
 
 const users = {};
-users[USERNAME] = PASSWORD;
+users[DYNDNS_USERNAME] = DYNDNS_PASSWORD;
 const hostnames = HOSTNAMES.split(/,/);
-
 
 const unauthorizedResponse = (req) => (req.auth ? 'Credentials rejected' : 'No credentials provided');
 

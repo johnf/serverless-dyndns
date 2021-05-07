@@ -11,16 +11,17 @@ provider:
   runtime: nodejs12.x
   stage: ${opt:stage, 'prod'}
   region: ${opt:region, 'ap-southeast-2'}
-  iamRoleStatements:
-    - Effect: "Allow"
-      Action:
-        - "route53:ListHostedZones"
-      Resource: "*"
-    - Effect: "Allow"
-      Action:
-        - "route53:ChangeResourceRecordSets"
-      Resource: "*"
-
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "route53:ListHostedZones"
+          Resource: "*"
+        - Effect: "Allow"
+          Action:
+            - "route53:ChangeResourceRecordSets"
+          Resource: "*"
 
 custom:
   customDomain:
