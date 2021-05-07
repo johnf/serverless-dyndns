@@ -21,6 +21,7 @@
   },
   "scripts": {
     "deploy": "NODE_ENV=production sls deploy",
+    "fdeploy": "NODE_ENV=production sls deploy function -f dyndns",
     "create_cert": "NODE_ENV=production sls create-cert",
     "create_domain": "NODE_ENV=production sls create_domain"
   }
