@@ -1,7 +1,6 @@
 service: dyndns
 
 useDotenv: true
-variablesResolutionMode: 20210326
 
 plugins:
   - serverless-webpack
@@ -11,7 +10,7 @@ plugins:
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs16.x
   stage: ${opt:stage, 'production'}
   region: ${opt:region, 'ap-southeast-2'}
   iam:
@@ -25,8 +24,6 @@ provider:
           Action:
             - "route53:ChangeResourceRecordSets"
           Resource: "*"
-  lambdaHashingVersion: 20201221
-
 
 custom:
   customDomain:
