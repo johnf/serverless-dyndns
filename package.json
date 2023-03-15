@@ -17,7 +17,7 @@
     "serverless-domain-manager": "^6.1.0",
     "serverless-dotenv-plugin": "^4.0.2",
     "serverless-webpack": "^5.3.2",
-    "webpack": "^5.53.0"
+    "webpack": "^5.76.0"
   },
   "scripts": {
     "deploy": "NODE_ENV=production sls deploy",
