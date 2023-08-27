@@ -34,3 +34,12 @@ yarn deploy
 * **USERNAME** - The username for clients
 * **PASSWORD** - The password for clients
 * **HOSTNAMES** - A comma delimited list of hostnames that are allowed to be updated
+
+## Useful commands
+
+* `npm run build`   compile typescript to js
+* `npm run watch`   watch for changes and compile
+* `npm run test`    perform the jest unit tests
+* `cdk deploy`      deploy this stack to your default AWS account/region
+* `cdk diff`        compare deployed stack with current state
+* `cdk synth`       emits the synthesized CloudFormation template

@@ -1,0 +1,10 @@
+{
+  "API_HOSTNAME": "dyndns.example.com",
+  "API_ZONENAME": "example.com",
+  "DYNDNS_USERNAME": "dyndns",
+  "DYNDNS_PASSWORD": "password",
+  "HOSTNAMES": [
+    "vpn.example.com",
+    "vpn.foobar.org"
+  ]
+}

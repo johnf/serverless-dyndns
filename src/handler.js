@@ -1,6 +1,6 @@
 import express from 'express';
-import serverless from 'serverless-http';
 import basicAuth from 'express-basic-auth';
+import serverlessExpress from '@vendia/serverless-express';
 import { Route53Client, ListHostedZonesCommand, ChangeResourceRecordSetsCommand } from '@aws-sdk/client-route-53';
 
 const { DYNDNS_USERNAME, DYNDNS_PASSWORD, HOSTNAMES } = process.env;
@@ -64,7 +64,5 @@ const update = async (req, res) => {
 };
 
 app.get('/nic/update', update);
-app.get('/v3/update', update);
 
-export const dyndns = serverless(app);
-export default dyndns;
+export const handler = serverlessExpress({ app });

@@ -1,16 +1,12 @@
-# package directories
+*.js
+!jest.config.js
+*.d.ts
 node_modules
 
-# Serverless directories
-.serverless
-.webpack
-
-# Yarn 2
-.yarn/*
-!.yarn/releases
-!.yarn/plugins
-.pnp.*
+# CDK asset staging directory
+.cdk.staging
+cdk.out
 
 # Local config
 .envrc
-.env.*
+config.json
