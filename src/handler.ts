@@ -3,26 +3,42 @@ import basicAuth from 'express-basic-auth';
 import serverlessExpress from '@vendia/serverless-express';
 import { Route53Client, ListHostedZonesCommand, ChangeResourceRecordSetsCommand } from '@aws-sdk/client-route-53';
 
-const { DYNDNS_USERNAME, DYNDNS_PASSWORD, HOSTNAMES } = process.env;
+const { DYNDNS_USERNAME, DYNDNS_PASSWORD, HOSTNAMES } = process.env as Record<string, string | undefined>;
 
-const users = {};
-users[DYNDNS_USERNAME] = DYNDNS_PASSWORD;
+if (!DYNDNS_USERNAME) {
+  throw new Error('DYNDNS_USERNAME not set');
+}
+
+if (!DYNDNS_PASSWORD) {
+  throw new Error('DYNDNS_PASSWORD not set');
+}
+
+if (!HOSTNAMES) {
+  throw new Error('HOSTNAMES not set');
+}
+
+const users = {
+  [DYNDNS_USERNAME]: DYNDNS_PASSWORD,
+};
 const hostnames = HOSTNAMES.split(/,/);
 
-const unauthorizedResponse = (req) => (req.auth ? 'Credentials rejected' : 'No credentials provided');
+const unauthorizedResponse = (req: any) => (req.auth ? 'Credentials rejected' : 'No credentials provided'); // eslint-disable-line @typescript-eslint/no-explicit-any
 
 const app = express();
 app.use(basicAuth({ users, unauthorizedResponse }));
 
-const update = async (req, res) => {
+app.get('/nic/update', async (req, res) => {
   console.debug('HOSTNAMES', hostnames);
   console.debug('QUERY', req.query);
 
-  const { hostname, myip } = req.query;
+  const { hostname, myip } = req.query as Record<string, string | undefined>;
+  if (!hostname) {
+    return res.send('ERROR: no hostname provided');
+  }
 
-  const ip = myip || (req.headers['x-forwarded-for'] && req.headers['x-forwarded-for'].split(/\s*,\s*/)[0]) || req.connection.remoteAddress;
+  const ip = myip || (req.headers['x-forwarded-for'] && (req.headers['x-forwarded-for'] as string).split(/\s*,\s*/)[0]) || req.socket.remoteAddress;
 
-  if (!hostnames.includes(hostname)) {
+  if (!hostnames.includes(hostname as string)) {
     console.error(`${hostname} not authorised`);
     return res.send(`ERROR: ${hostname} not allowed`);
   }
@@ -34,7 +50,7 @@ const update = async (req, res) => {
 
   return client.send(listCommand)
     .then(({ HostedZones: zones }) => {
-      const zone = zones.find((z) => z.Name === `${domainName}.`);
+      const zone = (zones || []).find((z) => z.Name === `${domainName}.`);
       if (!zone) {
         console.error(`${domainName} not in route53`);
         throw new Error(`ERROR: ${domainName} not in Route53`);
@@ -61,8 +77,6 @@ const update = async (req, res) => {
     })
     .then(() => res.send(`good ${ip}`))
     .catch((err) => res.send(err.message));
-};
-
-app.get('/nic/update', update);
+});
 
 export const handler = serverlessExpress({ app });

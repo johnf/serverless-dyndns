@@ -39,7 +39,7 @@ export class ServerlessDyndnsStack extends cdk.Stack {
 
     const func = new nodejs.NodejsFunction(this, 'DynDnsFunction', {
       functionName: 'dyndns',
-      entry: 'src/handler.js',
+      entry: 'src/handler.ts',
       handler: 'handler',
       runtime: lambda.Runtime.NODEJS_18_X,
       memorySize: 512,
