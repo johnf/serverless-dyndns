@@ -2,8 +2,8 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
 import * as acm from 'aws-cdk-lib/aws-certificatemanager';
-import * as apigwv2 from '@aws-cdk/aws-apigatewayv2-alpha';
-import * as apigwv2Integrations from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
+import * as apigwv2 from 'aws-cdk-lib/aws-apigatewayv2';
+import * as apigwv2Integrations from 'aws-cdk-lib/aws-apigatewayv2-integrations';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as nodejs from 'aws-cdk-lib/aws-lambda-nodejs';
@@ -41,7 +41,7 @@ export class ServerlessDyndnsStack extends cdk.Stack {
       functionName: 'dyndns',
       entry: 'src/handler.ts',
       handler: 'handler',
-      runtime: lambda.Runtime.NODEJS_18_X,
+      runtime: lambda.Runtime.NODEJS_22_X,
       memorySize: 512,
       environment: {
         API_HOSTNAME,
@@ -100,10 +100,11 @@ export class ServerlessDyndnsStack extends cdk.Stack {
       recordName: API_HOSTNAME.replace(`.${API_ZONENAME}`, ''),
     });
 
-    // TODO: Not supported yet
+    // API gateway does not support AAAA records
     // new route53.AaaaRecord(this, 'AAAARecord', {
     //   zone,
     //   target,
+    //   recordName: API_HOSTNAME.replace(`.${API_ZONENAME}`, ''),
     // });
   }
 }
